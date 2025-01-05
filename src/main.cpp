@@ -43,3 +43,31 @@ class Point{
         }
     };
 };
+
+class Path{ 
+    public: 
+    vector<Point*> points; 
+ 
+    ~Path(){ 
+        for(Point* point: points) 
+        { 
+            delete point; 
+        } 
+        points.clear(); 
+    } 
+ 
+    bool isInPath(int x,int y){ 
+          for(auto&& point: points){ 
+              if(point->x==x && point->y==y) 
+              { 
+                return true; 
+              } 
+          } 
+          return false; 
+    } 
+ 
+    void addPoint(int x,int y) 
+    { 
+        this->points.push_back(new Point(x,y)); 
+    } 
+};
