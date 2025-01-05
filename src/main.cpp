@@ -178,3 +178,48 @@ class Maze{
 
 
 };
+
+enum  Directions{ 
+    Right, 
+    Left, 
+    Up, 
+    Bottom, 
+    None, 
+}; 
+ 
+Directions reverse(Directions dir){ 
+          if(dir==Right) return Left; 
+          if(dir==Left) return Right; 
+          if(dir==Up) return Bottom; 
+          if(dir==Bottom) return Up; 
+ 
+          return None; 
+} 
+ 
+class Decision{ 
+      public: 
+      int x,y; 
+      vector<Directions> available; 
+      int usedCount; 
+      int id ; 
+      Decision(int x,int y,vector<Directions> available): x(x),y(y),available(available){ 
+             usedCount = 0; 
+ 
+             id = DecisionPointCount++; 
+      } 
+ 
+      void removeDir(Directions dirToRemove){ 
+            std::vector<Directions> updatedAvailable; 
+ 
+            // Loop through the original vector and copy the elements that are not the one we want to remove 
+            for (const auto& dir : available) { 
+                if (dir != dirToRemove) { 
+                    updatedAvailable.push_back(dir); 
+                } 
+            } 
+ 
+            available = updatedAvailable; 
+ 
+      } 
+ 
+};
