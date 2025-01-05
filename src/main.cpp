@@ -25,3 +25,21 @@ void setCursorPosition(int x, int y) {
     SetConsoleCursorPosition(hConsole, coord);
 }
 
+class Point{
+     public:
+     int x;
+     int y;
+     Point(int x,int y) : x(x),y(y){}
+
+    // Optionally, override equality for comparison (useful for sets or maps)
+    bool operator==(const Point& other) const {
+        return x == other.x && y == other.y;
+    }
+
+    // Optional: to use Point in unordered_map or unordered_set
+    struct HashFunction {
+        size_t operator()(const Point& p) const {
+            return hash<int>()(p.x) ^ (hash<int>()(p.y) << 1);
+        }
+    };
+};
