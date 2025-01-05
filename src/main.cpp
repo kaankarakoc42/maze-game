@@ -417,3 +417,97 @@ class Player{
            SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
       }
 };
+
+class MenuBase { 
+public: 
+    virtual void renderMenu() = 0;   
+    virtual void handleKeyboard() = 0;  
+ 
+ 
+    virtual ~MenuBase() {} 
+}; 
+ 
+ 
+class Menu : public MenuBase { 
+public: 
+    int x, y; 
+    Player& player; 
+    map<Directions, string> crashInfo; 
+ 
+    Menu(int x, int y, Player& player) : x(x), y(y), player(player) { 
+        crashInfo[Right] = "Right"; 
+        crashInfo[Left] = "Left"; 
+        crashInfo[Up] = "Up"; 
+        crashInfo[Bottom] = "Bottom"; 
+    } 
+ 
+    void renderMenu() override { 
+        setCursorPosition(x, y); 
+        cout << "Position (" << player.x << "," << player.y << ")";  
+        if (player.missionSuccess) { 
+            player.crushed = None; 
+            setCursorPosition(x, y + 2); 
+            SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN); 
+            cout << " Mission completed !";  
+            SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); 
+        } 
+        if (player.crushed != None) { 
+            setCursorPosition(x, y + 2); 
+            cout << "   Player crushed to " << crashInfo[player.crushed] << " !";  
+        } 
+    } 
+ 
+    void handleKeyboard() override { 
+     
+    } 
+}; 
+ 
+ 
+ 
+class MainMenu : public MenuBase { 
+public: 
+    vector<string> options; 
+    int startX, startY; 
+    int index; 
+    bool running; 
+ 
+    MainMenu(int startX, int startY, vector<string> options)  
+        : startX(startX), startY(startY), options(options), index(0), running(true) {} 
+ 
+    void renderMenu() override { 
+        for (size_t i = 0; i < options.size(); i++) { 
+            setCursorPosition(startX, startY + (i * 1)); 
+            if (index == i) { 
+                cout << " [X] " << options[i]; 
+            } else { 
+                cout << "[ ] " << options[i]; 
+            } 
+        }               
+    } 
+ 
+    void nextOption() { 
+        if (index < options.size() - 1) { 
+            index++; 
+        } else { 
+            index = 0; 
+        } 
+    } 
+ 
+    void prevOption() { 
+        if (index > 0) { 
+            index--; 
+        } else { 
+            index = options.size() - 1; 
+        } 
+    } 
+ 
+    void handleKeyboard() override { 
+        if (GetAsyncKeyState('S') & 0x8000) {  // Check if 'S' is pressed 
+            this->nextOption(); 
+        } else if (GetAsyncKeyState('W') & 0x8000) {  // Check if 'W' is pressed 
+            this->prevOption(); 
+        } else if (GetAsyncKeyState(VK_RETURN) & 0x8000) {  // Check if Enter is pressed 
+            running = false;  // Exit the game loop 
+        } 
+    } 
+};
