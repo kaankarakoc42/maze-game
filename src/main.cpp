@@ -511,3 +511,68 @@ public:
         } 
     } 
 };
+
+int main() {
+
+    CONSOLE_CURSOR_INFO info;
+    GetConsoleCursorInfo(hConsole,&info);
+    info.bVisible = false;
+    SetConsoleCursorInfo(hConsole,&info);
+
+    vector<string> options = {"Play Game","Auto Solve","Exit"};
+    MainMenu mmenu(20,3,options);
+    while(mmenu.running)
+    {
+        system("cls");
+        mmenu.handleKeyboard();
+        mmenu.renderMenu();
+        Sleep(100);
+    }
+    
+    if(mmenu.index == 2){
+        system("cls");
+        return 0;
+    }
+
+    try
+    {
+      Maze maze;
+      Player player(0,1,maze);
+      Menu menu(0,26,player);
+     if(mmenu.index == 0){ 
+            while(player.running){
+                system("cls");
+                player.handleKeyboardFlow();
+                maze.renderMaze();
+                //player.autoSolve();
+                player.renderPlayer();
+                menu.renderMenu();
+                setCursorPosition(0,0);
+                Sleep(100);
+            }
+            
+            system("cls");
+        }
+       else if(mmenu.index == 1){
+            while(player.running){
+                system("cls");
+                //player.handleKeyboard();
+                maze.renderMaze();
+                player.autoSolve();
+                player.renderPlayer();
+                menu.renderMenu();
+                setCursorPosition(0,0);
+                Sleep(100);
+            }
+            
+            system("cls");
+        }
+    
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+    
+    return 0;
+}
